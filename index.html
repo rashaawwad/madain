@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Madain Test</title>
+    <style>
+
+      .cardsDiv{
+
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+        flex-wrap: wrap;
+      }
+       .card {
+         border-radius: 30px;
+         padding: 10px;
+         margin: 10px;
+           width:50%;
+           border: 1px solid #000;
+
+       }
+
+
+       .category{
+         padding: 7px;
+         margin: 7px;
+         color:white;
+         background:#1086ED;
+         text-align:right;
+         display: flex;
+
+        float: right;
+        border-radius: 30px;
+      }
+
+      .container
+      {
+        display: flex;
+      }
+
+      h5
+      {
+        display: flex;
+    justify-content: center;
+    align-items: center;
+      }
+
+      .avatar
+      {
+        border-radius: 50%;
+        width: 50px;
+        color:white;
+            height: 50px;
+        padding-right:5px;
+        margin-right:5px;
+        background:#614BB9;
+        justify-content: center;
+        display:flex;
+    align-items: center;
+
+      }
+
+      .filter-button
+      {
+        padding: 7px;
+        margin: 7px;
+        color:white;
+        background:#1086ED;
+
+       border-radius: 30px;
+      }
+      .filter-buttons
+      {
+        display:flex;
+        justify-content:center;
+      }
+   </style>
+</head>
+<body>
+
+  <div class="filter-buttons">
+  <button onclick="handleClick('category1')" class="filter-button">category1</button>
+  <button onclick="handleClick('category2')" class="filter-button">category2</button>
+  <button onclick="handleClick('category3')" class="filter-button">category3</button>
+</div>
+
+<div class="cardsDiv" id="cardsDiv"></div>
+
+<script>
+    let currentCategory = null; // To keep track of the currently selected category
+    let fetchedData = []; // To store the fetched data
+
+    function handleClick(category) {
+        currentCategory = category;
+        filterAndDisplayCards();
+    }
+document.addEventListener('DOMContentLoaded', () => {
+    fetchMadianData();
+});
+
+function fetchMadianData() {
+        fetch('https://filltext.com/?rows=10&fname={firstName}&lname={lastName}&category=[%22category1%22,%22category2%22,%22category3%22]&pretty=true')
+            .then(response => response.json())
+            .then(data => {
+                fetchedData = data; // Store the fetched data
+                displayMadianData(fetchedData);
+            })
+            .catch(error => {
+                console.error('Error Plaese recheck your API link and retry:', error);
+            });
+    }
+
+function displayMadianData(data) {
+
+
+    const cardsDiv = document.getElementById('cardsDiv');
+    cardsDiv.innerHTML = '';
+    //cardsDiv.innerHTML = JSON.stringify(data, null, 2);
+  //for each item add card with  fname,lname and category
+    data.forEach(item => {
+
+   const card = document.createElement('div');
+    card.classList.add("card");
+
+    //add name ,avatar container
+     const container = document.createElement('div');
+     card.appendChild(container);
+     container.classList.add("container");
+
+    //add the avatar
+
+   const avatar = document.createElement('h2');
+   const fnameLetter = item.fname.charAt(0);
+   const lnameLetter = item.lname.charAt(0);
+   avatar.textContent = [fnameLetter, lnameLetter].join('');
+   avatar.classList.add("avatar");
+    container.appendChild(avatar);
+
+    //add the name
+   const nameHeader = document.createElement('h5');
+   nameHeader.textContent = [item.fname, ' ', item.lname].join('');
+   container.appendChild(nameHeader);
+
+
+
+  //add the category
+  const category = document.createElement('div');
+  category.textContent = item.category;
+  category.classList.add("category");
+   card.appendChild(category);
+
+  cardsDiv.appendChild(card);
+
+
+   });
+
+
+}
+
+
+
+function filterAndDisplayCards() {
+        const filteredData = fetchedData.filter(item => !currentCategory || item.category === currentCategory);
+        displayMadianData(filteredData);
+    }
+
+</script>
+
+</body>
+</html>
